@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lego-ologist QR Scanner</title>
+<!-- html5-qrcode library -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+  }
+  #reader {
+    width: 300px;
+    margin: auto;
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: green;
+  }
+</style>
+</head>
+<body>
+<h1>Lego-ologist QR Scanner</h1>
+<p>Scan a QR code to get the information.</p>
+
+<div id="reader"></div>
+<div id="result">Scan result will appear here</div>
+
+<script>
+function onScanSuccess(decodedText, decodedResult) {
+    // Handle the scanned code
+    document.getElementById('result').innerText = `Scanned Code: ${decodedText}`;
+    // Optionally, stop scanning after first success
+    html5QrcodeScanner.clear();
+}
+
+function onScanFailure(error) {
+    // Handle scan failure, normally we can ignore it
+    console.warn(`Scan error: ${error}`);
+}
+
+let html5QrcodeScanner = new Html5Qrcode("reader");
+
+// Start scanning using camera
+Html5Qrcode.getCameras().then(cameras => {
+    if (cameras && cameras.length) {
+        let cameraId = cameras[0].id;
+        html5QrcodeScanner.start(
+            cameraId, 
+            { fps: 10, qrbox: 250 },
+            onScanSuccess,
+            onScanFailure
+        );
+    } else {
+        alert("No camera found on this device.");
+    }
+}).catch(err => {
+    console.error(err);
+});
+</script>
+</body>
+</html>
